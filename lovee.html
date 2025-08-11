@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>لعبة نسبة الحب ❤️</title>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        background: linear-gradient(270deg, #ff9aa2, #ffb6b9, #ffdde1);
+        background-size: 600% 600%;
+        animation: bgMove 10s ease infinite;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    @keyframes bgMove {
+        0% {background-position: 0% 50%;}
+        50% {background-position: 100% 50%;}
+        100% {background-position: 0% 50%;}
+    }
+    .container {
+        text-align: center;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 20px;
+        border-radius: 20px;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 0 20px rgba(255,0,85,0.5);
+    }
+    h1 {
+        color: #ff0055;
+    }
+    input, button {
+        padding: 12px;
+        margin: 10px 0;
+        font-size: 18px;
+        border-radius: 10px;
+        border: none;
+        width: 100%;
+    }
+    button {
+        background: #ff0055;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .popup {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.7);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 10;
+    }
+    .popup-content {
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+        width: 80%;
+        max-width: 350px;
+        animation: popIn 0.5s ease;
+    }
+    @keyframes popIn {
+        from {transform: scale(0.5); opacity: 0;}
+        to {transform: scale(1); opacity: 1;}
+    }
+    .heart, .star, .sticker {
+        position: fixed;
+        animation: floatUp 3s linear infinite;
+    }
+    .sticker {
+        width: 40px;
+    }
+    @keyframes floatUp {
+        0% { transform: translateY(0); opacity: 1; }
+        100% { transform: translateY(-600px); opacity: 0; }
+    }
+    #musicBtn {
+        margin-top: 10px;
+        background: #ff3399;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🔥 لعبة نسبة الحب 🔥</h1>
+    <p>أدخل اسم البنت (الولد: محمد ثابت)</p>
+    <input type="text" id="girlName" placeholder="اسم البنت" />
+    <button onclick="checkLove()">احسب النسبة ❤️</button>
+</div>
+
+<div class="popup" id="popup">
+    <div class="popup-content" id="popupContent">
+        <p id="result"></p>
+        <button id="musicBtn" onclick="toggleMusic()">🎵 تشغيل / إيقاف الموسيقى</button>
+        <br />
+        <button onclick="closePopup()">إغلاق ✖</button>
+    </div>
+</div>
+
+<audio id="loveMusic" loop>
+  <source src="https://www.chosic.com/wp-content/uploads/2022/03/Valentine-_-ROMANTIC-BGM(chosic.com).mp3" type="audio/mpeg" />
+</audio>
+
+<script>
+function checkLove() {
+    let name = document.getElementById("girlName").value.trim();
+    let result = document.getElementById("result");
+    let popup = document.getElementById("popup");
+    let music = document.getElementById("loveMusic");
+    let musicBtn = document.getElementById("musicBtn");
+
+    document.querySelectorAll(".heart, .sticker, .star").forEach(el => el.remove());
+
+    if (name === "فاطمة") {
+        result.innerHTML = "💖 نسبة الحب بين فاطمة و محمد هي 100% 💖<br>أجمل حب في العالم! 😍";
+        popup.style.display = "flex";
+        music.play();
+        musicBtn.style.display = "inline-block";
+        for (let i = 0; i < 20; i++) {
+            createHeart();
+            createSticker();
+            createStar();
+        }
+    } else if (name === "") {
+        result.innerHTML = "❌ من فضلك أدخل اسم البنت";
+        popup.style.display = "flex";
+        music.pause();
+        music.currentTime = 0;
+        musicBtn.style.display = "none";
+    } else {
+        result.innerHTML = `💔 نسبة الحب بين ${name} و محمد هي 0% 💔<br>مفيش أمل 😂`;
+        popup.style.display = "flex";
+        music.pause();
+        music.currentTime = 0;
+        musicBtn.style.display = "none";
+    }
+}
+
+function closePopup() {
+    document.getElementById("popup").style.display = "none";
+}
+
+function createHeart() {
+    let heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerHTML = "❤️";
+    heart.style.left = Math.random() * window.innerWidth + "px";
+    heart.style.top = window.innerHeight + "px";
+    document.body.appendChild(heart);
+    setTimeout(() => { heart.remove(); }, 3000);
+}
+
+function createSticker() {
+    let sticker = document.createElement("img");
+    sticker.className = "sticker";
+    let stickers = [
+        "https://i.ibb.co/0j3xkqT/heart.png",
+        "https://i.ibb.co/55zmb2V/kiss.png",
+        "https://i.ibb.co/f4pxw9x/love-letter.png"
+    ];
+    sticker.src = stickers[Math.floor(Math.random() * stickers.length)];
+    sticker.style.left = Math.random() * window.innerWidth + "px";
+    sticker.style.top = window.innerHeight + "px";
+    document.body.appendChild(sticker);
+    setTimeout(() => { sticker.remove(); }, 4000);
+}
+
+function createStar() {
+    let star = document.createElement("div");
+    star.className = "star";
+    star.innerHTML = "✨";
+    star.style.left = Math.random() * window.innerWidth + "px";
+    star.style.top = window.innerHeight + "px";
+    document.body.appendChild(star);
+    setTimeout(() => { star.remove(); }, 3000);
+}
+
+function toggleMusic() {
+    let music = document.getElementById("loveMusic");
+    if (music.paused) {
+        music.play();
+    } else {
+        music.pause();
+    }
+}
+</script>
+
+</body>
+</html>
