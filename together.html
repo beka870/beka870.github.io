@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>مقياس الانسجام 💞</title>
+<style>
+  :root{--bg1:#0ea5e9;--bg2:#9333ea;--card:#0b1020;--text:#e5e7eb;--muted:#94a3b8;--accent:#22c55e}
+  *{box-sizing:border-box} body{
+    margin:0; min-height:100svh; display:flex; align-items:center; justify-content:center; padding:18px;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto; color:var(--text);
+    background: radial-gradient(1200px 600px at 20% 10%, rgba(255,255,255,.08), transparent),
+                linear-gradient(120deg, var(--bg1), var(--bg2));
+  }
+  .wrap{width:100%; max-width:540px; background:rgba(7,11,20,.75); border:1px solid rgba(255,255,255,.08);
+    border-radius:26px; padding:20px; backdrop-filter: blur(10px); box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  h1{margin:0 0 8px; font-size:28px}
+  p{margin:0 0 14px; color:var(--muted)}
+  .row{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  input{padding:12px; border-radius:14px; border:1px solid rgba(255,255,255,.1); background:#0b1222; color:var(--text)}
+  button{margin-top:10px; width:100%; padding:12px; border-radius:14px; border:0; font-weight:800; cursor:pointer; background:var(--accent); color:#052e10}
+  .card{margin-top:12px; background:#0b1020; border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:16px; text-align:center}
+  .big{font-size:40px; font-weight:900; letter-spacing:1px}
+  .tip{margin-top:8px; color:#a7f3d0}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>مقياس الانسجام 💞</h1>
+    <p>اكتب اسمين واحصل على نسبة ثابتة + اقتراح نشاط لطيف.</p>
+    <div class="row">
+      <input id="a" placeholder="الاسم الأول">
+      <input id="b" placeholder="الاسم الثاني">
+    </div>
+    <button id="go">احسب ✨</button>
+    <div id="out" class="card" style="display:none">
+      <div class="big" id="percent">0%</div>
+      <div id="msg" class="tip"></div>
+    </div>
+  </div>
+
+<script>
+function hashStr(s){ // تجزئة بسيطة لثبات النتيجة
+  let h=2166136261; for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return (h>>>0);
+}
+const tips = [
+  "موعد قهوة قصير اليوم ☕️", "رسالة مجاملة الآن ✉️", "مشي 20 دقيقة مع تصوير لحظة جميلة 📸",
+  "اسئلة تعارف سريعة من 5 نقاط ❓", "قائمة أغاني مشتركة لـ30 دقيقة 🎧", "طبخة/وجبة بسيطة سوا 🍽️",
+  "كتابة 3 أشياء ممتنين لها اليوم 💚", "تبادل نكتة وميم مضحك 😂", "لعبة أسئلة طفولية ممتعة 👶",
+  "مشاهدة غروب أو نجوم معًا 🌆✨"
+];
+document.getElementById("go").addEventListener("click", ()=>{
+  const a = document.getElementById("a").value.trim();
+  const b = document.getElementById("b").value.trim();
+  if(!a || !b){ alert("اكتب الاسمين أولًا"); return; }
+  const key = (a.toLowerCase()+"#"+b.toLowerCase());
+  const val = hashStr(key) % 101; // 0..100
+  const t = tips[ hashStr(key+"tip") % tips.length ];
+  document.getElementById("percent").textContent = val+"%";
+  document.getElementById("msg").textContent = "اقتراح: "+t;
+  document.getElementById("out").style.display = "block";
+});
+</script>
+</body>
+</html>
