@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>عجلة صراحة أو جرأة (لطيفة)</title>
+<style>
+  :root { --bg:#0f172a; --card:#111827; --accent:#22d3ee; --muted:#94a3b8; --text:#e5e7eb; }
+  *{box-sizing:border-box} body{
+    margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto; background:linear-gradient(120deg,#0f172a,#111827);
+    color:var(--text); min-height:100svh; display:flex; align-items:center; justify-content:center; padding:18px;
+  }
+  .app{ width:100%; max-width:520px; background:rgba(17,24,39,.8); backdrop-filter: blur(10px);
+    border:1px solid #1f2937; border-radius:24px; padding:20px; box-shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+  h1{margin:0 0 6px; font-size:28px}
+  .sub{color:var(--muted); margin:0 0 14px}
+  .tabs{display:flex; gap:8px; margin-bottom:10px}
+  .tab{flex:1; text-align:center; padding:10px 12px; border-radius:14px; border:1px solid #263042; cursor:pointer; user-select:none}
+  .tab.active{background:var(--accent); color:#0b1020; border-color:transparent; font-weight:700}
+  .card{background:#0b1020; border:1px solid #1e293b; border-radius:18px; padding:16px; min-height:120px; display:flex; align-items:center; justify-content:center; text-align:center; font-size:18px}
+  .controls{display:flex; gap:10px; margin-top:12px}
+  button{flex:1; padding:12px 14px; border-radius:14px; border:1px solid #263042; background:#0b1222; color:var(--text); cursor:pointer; font-weight:700}
+  button.primary{background:var(--accent); color:#061521; border-color:transparent}
+  .row{display:flex; gap:8px; margin-top:10px}
+  input[type="text"]{flex:1; padding:10px 12px; border-radius:12px; border:1px solid #253145; background:#0b1222; color:var(--text)}
+  .meta{display:flex; gap:10px; align-items:center; justify-content:space-between; margin-top:8px; color:var(--muted); font-size:13px}
+  .hearts{font-size:18px}
+  .timer{font-variant-numeric:tabular-nums}
+  .foot{margin-top:12px; text-align:center; color:#7dd3fc; font-size:12px}
+</style>
+</head>
+<body>
+  <div class="app">
+    <h1>🎯 صراحة أو جرأة</h1>
+    <p class="sub">إصدار لطيف — للضحك والتقارب بدون إحراج.</p>
+
+    <div class="tabs">
+      <div id="tab-truth" class="tab active">صراحة</div>
+      <div id="tab-dare"  class="tab">جرأة</div>
+      <div id="tab-mix"   class="tab">عشوائي</div>
+    </div>
+
+    <div id="card" class="card">اضغط “اختر بطاقة” للحصول على سؤال/جرأة</div>
+
+    <div class="controls">
+      <button id="btn-pick" class="primary">اختر بطاقة ✨</button>
+      <button id="btn-timer">⏱️ مؤقّت 20ث</button>
+    </div>
+
+    <div class="row">
+      <input id="player" type="text" placeholder="اسم اللاعب (اختياري)">
+      <button id="btn-heart">💖 +1</button>
+    </div>
+
+    <div class="meta">
+      <div class="hearts">القلوب: <span id="hearts">0</span></div>
+      <div class="timer">الوقت: <span id="time">00:00</span></div>
+    </div>
+
+    <div class="foot">نصائح: غيّر الوضع بين “صراحة/جرأة/عشوائي”، واجمع قلوبًا كمكافآت لطيفة.</div>
+  </div>
+
+<script>
+const truths = [
+  "اذكر شيئًا تُحبه في نفسك 👑", "ما أجمل ذكرى بسيطة عندك؟",
+  "ما أول شيء لاحظته في أقرب شخص بجانبك؟", "لو غنّيت الآن: أي مقطع تختار؟",
+  "ما أكثر شيء يضحكك مؤخرًا؟", "أي صفة لطيفة تتمنّى اكتسابها؟",
+  "لو ترسل مجاملة الآن، ماذا تقول؟", "ما أفضل فيلم/أغنية تعطيك مزاج حلو؟",
+];
+const dares = [
+  "التقط سيلفي مضحك بإيموجي تختاره المجموعة 😜",
+  "قل جملة مقلوبة: «أنا مبسوط اليوم» بالعكس!",
+  "ارسم قلبًا بإصبعك في الهواء لمدة 5 ثوانٍ 💗",
+  "قل 3 مجاملات لشخص تختاره المجموعة 🌟",
+  "قل نكتة قصيرة الآن!", "تحدث بلهجة مختلفة 10 ثوانٍ",
+  "مثّل تعبير 😮‍💨 بإيموجي حيّ",
+];
+const card = document.getElementById("card");
+const heartsEl = document.getElementById("hearts");
+const timeEl = document.getElementById("time");
+const nameEl = document.getElementById("player");
+let hearts = 0, timer=null, t=0;
+const tabs = {
+  truth: document.getElementById("tab-truth"),
+  dare:  document.getElementById("tab-dare"),
+  mix:   document.getElementById("tab-mix"),
+};
+let mode = "truth";
+Object.entries(tabs).forEach(([k, el])=>{
+  el.addEventListener("click", ()=>{
+    mode = k; Object.values(tabs).forEach(x=>x.classList.remove("active"));
+    el.classList.add("active");
+  });
+});
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)] }
+document.getElementById("btn-pick").addEventListener("click", ()=>{
+  const who = nameEl.value.trim(); 
+  let text = "";
+  if(mode==="truth") text = pick(truths);
+  else if(mode==="dare") text = pick(dares);
+  else text = Math.random()<0.5? pick(truths): pick(dares);
+  card.textContent = (who? (who+": "):"") + text;
+  card.animate([{transform:"scale(.98)"},{transform:"scale(1)"}],{duration:180, easing:"ease-out"});
+});
+document.getElementById("btn-heart").addEventListener("click", ()=>{
+  hearts++; heartsEl.textContent = hearts;
+});
+document.getElementById("btn-timer").addEventListener("click", ()=>{
+  if(timer){ clearInterval(timer); timer=null; t=0; timeEl.textContent="00:00"; return;}
+  let seconds = 20; t = seconds; timeEl.textContent = "00:"+String(t).padStart(2,"0");
+  timer = setInterval(()=>{
+    t--; timeEl.textContent = "00:"+String(Math.max(t,0)).padStart(2,"0");
+    if(t<=0){ clearInterval(timer); timer=null; }
+  },1000);
+});
+</script>
+</body>
+</html>
